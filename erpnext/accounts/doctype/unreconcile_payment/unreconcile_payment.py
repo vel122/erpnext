@@ -60,6 +60,28 @@ class UnreconcilePayment(Document):
 		# todo: more granular unreconciliation
 		for alloc in self.allocations:
 			doc = frappe.get_doc(alloc.reference_doctype, alloc.reference_name)
+			if doc.doctype not in ["Sales Invoice", "Purchase Invoice"]:
+				continue
+
+			jv_name = frappe.db.get_value(
+				"Journal Entry Account",
+				{
+					"reference_type": doc.doctype,
+					"reference_name": doc.name,
+					"parenttype": "Journal Entry",
+					"docstatus": 1,
+				},
+				"parent",
+			)
+			if jv_name:
+				jv = frappe.get_doc("Journal Entry", jv_name)
+				if jv.is_system_generated:
+					frappe.throw(
+						_(
+							"Cannot unreconcile {0} {1} — it is linked to a system-generated Journal Entry."
+						).format(doc.doctype, doc.name)
+					)
+
 			unlink_ref_doc_from_payment_entries(doc, self.voucher_no)
 			cancel_exchange_gain_loss_journal(doc, self.voucher_type, self.voucher_no)
 
