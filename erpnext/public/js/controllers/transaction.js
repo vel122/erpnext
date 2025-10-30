@@ -38,6 +38,14 @@ erpnext.TransactionController = class TransactionController extends erpnext.taxe
 					item.margin_rate_or_amount = 0;
 					item.rate_with_margin = 0;
 				}
+			} else if (item.price_list_rate && item.blanket_order_rate) {
+				item.rate = item.blanket_order_rate;
+				item.base_rate_with_margin = item.blanket_order_rate * flt(frm.doc.conversion_rate);
+				item.price_list_rate = item.blanket_order_rate;
+				item.discount_percentage = 0.0;
+				item.margin_type = "";
+				item.margin_rate_or_amount = 0;
+				item.rate_with_margin = 0;
 			} else {
 				item.discount_percentage = 0.0;
 				item.margin_type = "";
