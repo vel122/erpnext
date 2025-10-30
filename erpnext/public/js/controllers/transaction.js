@@ -1347,6 +1347,8 @@ erpnext.TransactionController = class TransactionController extends erpnext.taxe
 						me.set_actual_charges_based_on_currency(exchange_rate);
 						me.frm.set_value("conversion_rate", exchange_rate);
 					}
+					me.frm.set_df_property("conversion_rate", "hidden", 0);
+					me.frm.refresh_field("conversion_rate");
 				}
 			);
 		} else {
@@ -1357,6 +1359,8 @@ erpnext.TransactionController = class TransactionController extends erpnext.taxe
 			} else {
 				this.conversion_rate();
 			}
+			this.frm.set_df_property("conversion_rate", "hidden", 1);
+			this.frm.refresh_field("conversion_rate");
 		}
 	}
 
